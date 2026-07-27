@@ -18,12 +18,12 @@ output "default_subnets_ids" {
 
 # 알파벳 순으로 출력된다 (작성 기준 X)
 output "aws_ami_amazon_linux_id" {
-    value = data.aws_ami.amazon_linux.id
-    description = "아마존 리눅스 AMI 아이디 조회"
-  
+  value       = data.aws_ami.amazon_linux.id
+  description = "아마존 리눅스 AMI 아이디 조회"
+
 }
 output "aws_ami_amazon_linux_info" {
-    value = data.aws_ami.amazon_linux
-    description = "아마존 리눅스 AMI 조회"
-  
+  value       = data.aws_ami.amazon_linux
+  description = "아마존 리눅스 AMI 조회"
+
 }
