@@ -54,5 +54,13 @@ books = [
 ]
 is_mz = "false" <- 수정
 name = "테라폼"
-stations = "테라폼"
+stations = {
+    A = "영등포역"
+    B = 100
+    }
 ```
+
+- 외부 입력하여 수정2
+    - 변수 2개 추가
+    - dev.tfvars, prod.tfvars 2개 준비
+    - 적용
