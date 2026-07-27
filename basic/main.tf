@@ -100,10 +100,10 @@ resource "aws_instance" "DE-AI-13_IaC-TF" {
 }
 
 # 5. Elastic IP 생성 -> EC2 연결 (차후 IP를 미리 확보하고 ec2 생성되면 연결하는 방식 진화)
-resource "aws_eip" "DE-AI-13-IaC-TF-EIP" {
-    # EC2 인스턴스
-    instance = aws_instance.DE-AI-13_IaC-TF.id
-    # 네트워크
-    domain = "vpc"
+# resource "aws_eip" "DE-AI-13-IaC-TF-EIP" {
+#     # EC2 인스턴스
+#     instance = aws_instance.DE-AI-13_IaC-TF.id
+#     # 네트워크
+#     domain = "vpc"
   
-}
+# }
