@@ -11,11 +11,19 @@ output "default_subnets_ids" {
   description = "서울 리전의 기본 VPC에 속한 서브넷 ID 리스트"
 }
 
+
+# 현재 위치 확인( ~/basic/ )
+# 출결결과 확인 (init -> plan -> apply -> destroy)
+
+
 # 알파벳 순으로 출력된다 (작성 기준 X)
 output "aws_ami_amazon_linux_id" {
     value = data.aws_ami.amazon_linux.id
     description = "아마존 리눅스 AMI 아이디 조회"
   
 }
-# 현재 위치 확인( ~/basic/ )
-# 출결결과 확인 (init -> plan -> apply -> destroy)
+output "aws_ami_amazon_linux_info" {
+    value = data.aws_ami.amazon_linux
+    description = "아마존 리눅스 AMI 조회"
+  
+}
