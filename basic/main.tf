@@ -76,7 +76,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 # 4. EC2 생성 선언
-resource "aws_instance" "DE-AI-13_IaC-TF" {
+resource "aws_instance" "DE-AI-13-IaC-TF" {
   # AMI ->OS
   ami = data.aws_ami.amazon_linux.id
   # 인스턴스 유형

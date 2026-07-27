@@ -35,10 +35,10 @@
 # }
 # EC2 생성 시 자동으로 부여되는 IP
 output "public_ip" {
-    value = aws_instance.DE-AI-13_IaC-TF.public_ip
-  
+    value = aws_instance.DE-AI-13-IaC-TF.public_ip
+
 }
 # EC 2 인스턴스 ID 출력
 output "instance_id" {
-    value = aws_eip.DE-AI-13-IaC-TF-EIP.id
+    value = aws_instance.DE-AI-13-IaC-TF.id
 }
