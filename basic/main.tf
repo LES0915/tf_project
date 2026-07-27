@@ -15,7 +15,7 @@ data "aws_subnets" "default" {
 }
 
 # 3. 보안그룹 생성 선업 - EC2 진입하는데 인바운드 IP/포트, 아웃바운드 IP/포트 설정 => 접근 제한!!
-# resource "aws_security_group" "DE-AI-13-IaC-TF-GROUP" {
+resource "aws_security_group" "DE-AI-13-IaC-TF-GROUP" {
 #   # 메타정보
 #   name        = "terraform-13-sg"
 #   # ASCII만 지원
@@ -53,7 +53,7 @@ data "aws_subnets" "default" {
 #     # 전세계로 개방
 #     cidr_blocks = ["0.0.0.0/0"]
 #   }
-# }
+}
 
 # 아마존 리눅스 AMI의 ID 조회
 data "aws_ami" "amazon_linux" {
@@ -72,5 +72,29 @@ data "aws_ami" "amazon_linux" {
       name = "architecture"
       values = [ "x86_64" ]
     }
+  
+}
+
+# 4. EC2 생성 선언
+resource "aws_instance" "DE-AI-13_IaC-TF" {
+    # AMI ->OS
+    ami = data.aws_ami.amazon_linux.id
+    # 인스턴스 유형
+    instance_type = var.instance_type
+    # 키 페어
+    key_name = var.key_name
+    # 서브넷
+    subnet_id = data.aws_subnets.default.ids[0] # a,b,c,d 중 첫번째 선택(a)
+    # 보안 그룹 
+    vpc_security_group_ids = [ 
+        aws_security_group.DE-AI-13-IaC-TF-GROUP.id
+     ]
+    # 스토리지 생략
+    # 고급 설정 생략
+    # 태그
+    tags = {
+        Name = "DE-AI-13-IaC-TF-EC2"
+    }
+    # IP는 임시로 자동할당 (현재 EIP 사용 X)
   
 }
