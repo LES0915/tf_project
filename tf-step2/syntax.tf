@@ -66,8 +66,8 @@ output "instance_count" {
 # locals
 locals {
   project = "테라폼"
-  env = "pod"
-  name = "${local.project}-${local.env}-${var.environment}"
+  env     = "pod"
+  name    = "${local.project}-${local.env}-${var.environment}"
 }
 output "local_value" {
   value = local.name
@@ -85,7 +85,7 @@ locals {
   servers = {
     web = "t3.micro"
     was = "t3.small"
-    db = "t3.medium"
+    db  = "t3.medium"
   }
 }
 

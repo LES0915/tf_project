@@ -110,5 +110,5 @@ resource "aws_instance" "DE-AI-13-IaC-TF" {
 #   instance = aws_instance.DE-AI-13_IaC-TF[ count.index ].id
 #   # 네트워크
 #   domain = "vpc"
-  
+
 # }
