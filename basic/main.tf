@@ -36,7 +36,11 @@ resource "aws_security_group" "DE-AI-13-IaC-TF-GROUP" {
         cidr_blocks = ["222.108.125.33/32"]
     }
     ingress {
-
+        protocol ="tcp"
+        from_port = 80
+        to_port = 80
+        description = "HTTP"
+        cidr_blocks = ["0.0.0.0/0"] # 전세계로 개방
     }
     # 아웃바운드 (내부 트래픽이 외부로 나감)
     egress {
