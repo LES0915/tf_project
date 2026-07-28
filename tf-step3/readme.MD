@@ -231,3 +231,8 @@ AWS
 - ~/tf-step3/vpc.tf 생성
     - 작성
     - terraform init
+
+## 서브넷 구성 (public)
+- 작성
+- terraform apply
+- terraform state list
