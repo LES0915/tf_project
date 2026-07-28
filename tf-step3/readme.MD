@@ -6,3 +6,14 @@
     -> web(public subnet), was/db(private subnet) 확장 + NAT gateway, SSH Manager, IAM Role
     -> 소스코드, 쿠버네티스, CI/CD
     -> 대시보드 (그라파타, 프로메테우스,..)
+
+# 구성
+    - AWS
+        - VPC
+        - CIDR
+        - Public/Private Subnet
+        - Internet Gateway
+        - NAT Gateway
+        - Route Table/Route Table Assoication
+        - ..
+    
