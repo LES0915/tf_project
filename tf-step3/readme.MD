@@ -233,6 +233,18 @@ AWS
     - terraform init
 
 ## 서브넷 구성 (public)
+```
+terraform apply
+---
+..
+---
+terraform state list
+---
+aws_subnet.public
+aws_vpc.DE-AI-25-company
+```
+
+## Internet Gateway 
 - 작성
-- terraform apply
-- terraform state list
+- 생성
+- 확인
