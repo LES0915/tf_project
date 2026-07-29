@@ -40,7 +40,7 @@ resource "aws_instance" "server" {
     each.value.sg
   ]
   tags = {
-    Name = "DE-AI-25-ap2-${upper(each.key)}"
+    Name = "DE-AI-13-ap2-${upper(each.key)}"
   }
   user_data = <<-EOF
         #!/bin/bash
