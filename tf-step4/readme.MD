@@ -81,3 +81,8 @@ L VPC
 
 # VPC Private Subnet 구성
 - 서브넷, 라우트 테이블, 서브넷-라우트테이블 연결
+- 구성후
+    - VPC > 리소스맵 > private 서브넷 연결 다이어그램 확인
+
+# EC2 구성 - 모든 public 서브넷으로 배치 생성
+- ec2.tf
