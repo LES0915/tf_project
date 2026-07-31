@@ -7,6 +7,7 @@ resource "aws_vpc" "main" {
     Name = "${local.project}-VPC"
   }
 }
+
 # Internet Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
@@ -18,13 +19,11 @@ resource "aws_internet_gateway" "main" {
 # Public Subnets - Public ALB, NAT Gateway
 resource "aws_subnet" "public" {
   # 반복데이터 세팅 (cidr)
-  for_each = local.public_subnets
-
+  for_each   = local.public_subnets
   vpc_id     = aws_vpc.main.id
   cidr_block = each.value
   # 키값이 a면 a에 맞는 값들로 구성, c도 동일함
-  availability_zone = local.azs[each.key]
-
+  availability_zone       = local.azs[each.key]
   map_public_ip_on_launch = true
   # DE-AI-13-IaC-3tier-V1-PUBLIC-A, DE-AI-13-IaC-3tier-V1-PUBLIC-C
   tags = {
@@ -36,36 +35,27 @@ resource "aws_subnet" "public" {
 
 # Private Application Subnets - Web, Was, internal ALB
 resource "aws_subnet" "app" {
-  for_each = local.app_subnets
-
-  vpc_id     = aws_vpc.main.id
-  cidr_block = each.value
-
-  availability_zone = local.azs[each.key]
-
+  for_each                = local.app_subnets
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = each.value
+  availability_zone       = local.azs[each.key]
   map_public_ip_on_launch = false
-
   tags = {
     Name = "${local.project}-APP-${upper(each.key)}"
-
     Tier = "application"
   }
 }
-# Private DB Subnets - RDS
+
+# Private Db Subnets - RDS
 resource "aws_subnet" "db" {
-  for_each = local.db_subnets
-
-  vpc_id     = aws_vpc.main.id
-  cidr_block = each.value
-
-  availability_zone = local.azs[each.key]
-
+  for_each                = local.db_subnets
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = each.value
+  availability_zone       = local.azs[each.key]
   map_public_ip_on_launch = false
-
   tags = {
     Name = "${local.project}-DB-${upper(each.key)}"
-
-    Tier = "datatbase"
+    Tier = "database"
   }
 }
 
@@ -82,21 +72,18 @@ resource "aws_route_table" "public" {
 }
 resource "aws_route_table_association" "public" {
   for_each       = aws_subnet.public
-  subnet_id      = each.value.id # a존의 서브넷, c존의 서브넷 -> 반복 구성 연결
+  subnet_id      = each.value.id # a 존의 서브넷, c 존의 서브넷 -> 반복 구성 연결
   route_table_id = aws_route_table.public.id
-
 }
 
-# Nat Gateway - EIP
+# Nat Gateway - eip
 resource "aws_eip" "nat" {
-  for_each = local.azs # a존과 c존에 각각 IP 할당
+  for_each = local.azs # a존, c존에 각각 IP 할당
   domain   = "vpc"
   tags = {
-    Name = "${local.project}-NAT-EIP-${upper(each.key)}" # A, C라는 태그가 붙음
+    Name = "${local.project}-NAT-EIP-${upper(each.key)}" # A, C
   }
-
 }
-
 resource "aws_nat_gateway" "main" {
   for_each      = local.azs
   allocation_id = aws_eip.nat[each.key].id # ..nat['A'].., ..nat['C']..
@@ -108,7 +95,6 @@ resource "aws_nat_gateway" "main" {
   depends_on = [
     aws_internet_gateway.main
   ]
-
 }
 
 # Private App Route Table/association
@@ -123,12 +109,10 @@ resource "aws_route_table" "app" {
     Name = "${local.project}-APP-RT"
   }
 }
-
 resource "aws_route_table_association" "app" {
   for_each       = aws_subnet.app
   subnet_id      = each.value.id
   route_table_id = aws_route_table.app[each.key].id
-
 }
 # Private Db Route Table/association
 # RDS 서비스 사용 -> 기존 EC2 기반 NAT 구성과 상이함
@@ -138,10 +122,8 @@ resource "aws_route_table" "db" {
     Name = "${local.project}-DB-RT"
   }
 }
-
 resource "aws_route_table_association" "db" {
   for_each       = aws_subnet.db
   subnet_id      = each.value.id
   route_table_id = aws_route_table.db.id
-
 }
