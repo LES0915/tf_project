@@ -68,8 +68,24 @@ resource "aws_subnet" "db" {
     Tier = "datatbase"
   }
 }
-# Public Route Table/association 
 
+# Public Route Table/association 
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+  tags = {
+    Name = "${local.project}-PUBLIC-RT"
+  }
+}
+resource "aws_route_table_association" "public" {
+  for_each = aws_subnet.public
+  subnet_id      = each.value.id # a존의 서브넷, c존의 서브넷 -> 반복 구성 연결
+  route_table_id = aws_route_table.public.id
+
+}
 # Nat Gateway - EIP
 
 # Private App Route Table/association - Web, Was
