@@ -18,7 +18,7 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 variable "web_desired_capacity" { # 테라폼이 구축할 때 기본 2개 생성
-  description = "WEB ASG 기본 인스턴스 수" 
+  description = "WEB ASG 기본 인스턴스 수"
   type        = number
   default     = 2
 }
