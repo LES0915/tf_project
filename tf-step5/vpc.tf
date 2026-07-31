@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
   # 반복데이터 세팅 (cidr)
   for_each = local.public_subnets
 
-  vpc_id     = aws_vpc.main
+  vpc_id     = aws_vpc.main.id
   cidr_block = each.value
   # 키값이 a면 a에 맞는 값들로 구성, c도 동일함
   availability_zone = local.azs[each.key]
@@ -36,14 +36,14 @@ resource "aws_subnet" "public" {
 
 # Private Application Subnets - Web, Was, internal ALB
 resource "aws_subnet" "app" {
-  for_each = local.public_subnets
+  for_each = local.app_subnets
 
-  vpc_id     = aws_vpc.main
+  vpc_id     = aws_vpc.main.id
   cidr_block = each.value
 
   availability_zone = local.azs[each.key]
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "${local.project}-APP-${upper(each.key)}"
@@ -53,14 +53,14 @@ resource "aws_subnet" "app" {
 }
 # Private DB Subnets - RDS
 resource "aws_subnet" "db" {
-  for_each = local.public_subnets
+  for_each = local.db_subnets
 
-  vpc_id     = aws_vpc.main
+  vpc_id     = aws_vpc.main.id
   cidr_block = each.value
 
   availability_zone = local.azs[each.key]
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "${local.project}-DB-${upper(each.key)}"
