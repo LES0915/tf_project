@@ -81,12 +81,35 @@ resource "aws_route_table" "public" {
   }
 }
 resource "aws_route_table_association" "public" {
-  for_each = aws_subnet.public
+  for_each       = aws_subnet.public
   subnet_id      = each.value.id # a존의 서브넷, c존의 서브넷 -> 반복 구성 연결
   route_table_id = aws_route_table.public.id
 
 }
+
 # Nat Gateway - EIP
+resource "aws_eip" "nat" {
+  for_each = local.azs # a존과 c존에 각각 IP 할당
+  domain   = "vpc"
+  tags = {
+    Name = "${local.project}-NAT-EIP-${upper(each.key)}" # A, C라는 태그가 붙음
+  }
+
+}
+
+resource "aws_nat_gateway" "main" {
+  for_each      = local.azs
+  allocation_id = aws_eip.nat[each.key].id # ..nat['A'].., ..nat['C']..
+  # A존의 퍼블릭 서브넷, C존의 퍼블릭 서브넷 각각 연결
+  subnet_id = aws_subnet.public[each.key].id
+  tags = {
+    Name = "${local.project}-NAT-${upper(each.key)}"
+  }
+  depends_on = [
+    aws_internet_gateway.main
+  ]
+
+}
 
 # Private App Route Table/association - Web, Was
 
