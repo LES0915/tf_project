@@ -1,12 +1,12 @@
 #############################################
 # WEB/WAS EC2를 각각 최소 2대 유지하도록 구성
-# CPU 측정(트레픽 나름 비례) -> 50% 기준 설정(사내별 상이함) 
+# CPU 측정(트래픽에 비례) -> 50% 기준 설정(사내별 상이함)
 # -> Ec2의 개수를 증감(최대 4대(설정)까지):Scaling -> 자동(Auto) 처리
 #############################################
 # 증감 등 
 resource "aws_autoscaling_group" "web" {
   name = "${local.project}-WEB-ASG"
-  # 최소 크기 - 최소 2대는 상시 유지 -> 장애 발생 하더라도 2개로 맞춘다!!
+  # 최소 크기 - 최소 2대는 상시 유지 -> 장애 발생하더라도 2개로 맞춘다!!
   min_size = 2
   # 최초 디자인된 개수
   desired_capacity = var.web_desired_capacity
@@ -19,7 +19,7 @@ resource "aws_autoscaling_group" "web" {
   target_group_arns = [aws_lb_target_group.web.arn]
   # 헬스 체크 ELB(ALB)로 구성
   health_check_type = "ELB"
-  # 서버구성후 180초 동안 헬스 체크 실패는 무시( 최초 구성시 로드, 업데이트등 정상 x)
+  # 서버 구성 후 180초 동안 헬스 체크 실패는 무시(최초 구성 시 로드, 업데이트 등 정상 x)
   health_check_grace_period = 180
 
   # ec2를 launch_template 이용하여 구성하겠다 (상세 구성 내용-런치 템플릿(기존 ec2.tf))
@@ -39,9 +39,9 @@ resource "aws_autoscaling_group" "web" {
       min_healthy_percentage = 50
     }
   }
-  # 태그 - 블록 반복 -> 기존태그(3개) + 신규 태그(2개) 합병하여 동적 eC2에 동적 세팅 샘플
+  # 태그 - 블록 반복 -> 기존 태그(3개) + 신규 태그(2개) 합병하여 동적 EC2에 동적 세팅 샘플
   dynamic "tag" {
-    # merge() 합병 - 기존태그(3개) + 신규 태그(2개) 합병
+    # merge() 합병 - 기존 태그(3개) + 신규 태그(2개) 합병
     for_each = merge(local.common_tags, {
       Name = "${local.project}-WEB"
       Tier = "web"

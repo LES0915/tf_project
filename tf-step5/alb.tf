@@ -11,7 +11,7 @@ resource "aws_lb" "public" {
   subnets = [for subnet in aws_subnet.public : subnet.id]
   tags    = { Name = "${local.project}-PUBLIC-ALB" }
 }
-# ALB가 주기적으로 대상 EC2의 상태를 체크하는 설정(헬스체크등)
+# ALB가 주기적으로 대상 EC2의 상태를 체크하는 설정(헬스체크 등)
 resource "aws_lb_target_group" "web" {
   name        = "${local.project}-web-tg"
   port        = 80
@@ -74,7 +74,7 @@ resource "aws_lb_target_group" "was" {
   }
   tags = { Name = "${local.project}-WAS-TG" }
 }
-# 포트제외, 대상제외 구성 모두 동일함
+# 포트, 대상 외 구성은 모두 동일함
 resource "aws_lb_listener" "internal_http" {
   load_balancer_arn = aws_lb.internal.arn
   port              = 8000

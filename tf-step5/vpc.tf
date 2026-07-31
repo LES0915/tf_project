@@ -18,7 +18,7 @@ resource "aws_internet_gateway" "main" {
 
 # Public Subnets - Public ALB, NAT Gateway
 resource "aws_subnet" "public" {
-  # 반복데이터 세팅 (cidr)
+  # 반복 데이터 세팅 (cidr)
   for_each   = local.public_subnets
   vpc_id     = aws_vpc.main.id
   cidr_block = each.value
