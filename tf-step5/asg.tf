@@ -6,24 +6,40 @@
 # 증감 등
 resource "aws_autoscaling_group" "web" {
   name                      = "${local.project}-WEB-ASG"
+  # 최소 크기 - 최소 2대는 상시 유지 -> 장애가 발생 하더라도 2개로 맞춘다!!
   min_size                  = 2
+  # 최초 디자인된 개수
   desired_capacity          = var.web_desired_capacity
+  # 최대 확장되는 개수
   max_size                  = 4
+
+  # 두(n)개 서브넷의 가용 영역별로 구성
   vpc_zone_identifier       = [for subnet in aws_subnet.app : subnet.id]
+  # 로드밸런서 타겟 그룹 배치
   target_group_arns         = [aws_lb_target_group.web.arn]
+  # 헬스 체크 ELB(ALB)로 구성
   health_check_type         = "ELB"
+  # 서버구성 후 180초 동안 헬스 체크 실패는 무시(최초 구성 시 로드, 업데이트 등 정상 x)
   health_check_grace_period = 180
+
+  # EC2를 launch_template 이용하여 구성하겠다 (상세 구성 내용-런치 템플릿)
   launch_template {
     id      = aws_launch_template.web.id
     version = "$Latest"
   }
+  # 내용변경 (버전변경) -> 교체(순차)
   instance_refresh {
+    # 장애/ 업그레이드 등 이슈로 교체 시 -> 순차적 처리 -> (1개 신규 생성 -> 1개 삭제..)
     strategy = "Rolling"
+    # 순차 교체 세부 조건
     preferences {
+      # 최소 50% 성능 유지 (헬스 체크 등)
       min_healthy_percentage = 50
     }
   }
+  # 태그 - 블록 반복 -> 기존태그(3개) + 신규 태그(2개) 합병하여 동적 EC2에 동적 세팅 샘플
   dynamic "tag" {
+    # merge() 합병 - 기존태그(3개) + 신규 태그(2개) 합병
     for_each = merge(local.common_tags, {
       Name = "${local.project}-WEB"
       Tier = "web"
