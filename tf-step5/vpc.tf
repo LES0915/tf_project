@@ -33,10 +33,41 @@ resource "aws_subnet" "public" {
     Tier = "public"
   }
 }
-# Private Application Subnets - Web, Was, Internal ALB
 
+# Private Application Subnets - Web, Was, internal ALB
+resource "aws_subnet" "app" {
+  for_each = local.public_subnets
+
+  vpc_id     = aws_vpc.main
+  cidr_block = each.value
+
+  availability_zone = local.azs[each.key]
+
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "${local.project}-APP-${upper(each.key)}"
+
+    Tier = "application"
+  }
+}
 # Private DB Subnets - RDS
+resource "aws_subnet" "db" {
+  for_each = local.public_subnets
 
+  vpc_id     = aws_vpc.main
+  cidr_block = each.value
+
+  availability_zone = local.azs[each.key]
+
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "${local.project}-DB-${upper(each.key)}"
+
+    Tier = "datatbase"
+  }
+}
 # Public Route Table/association 
 
 # Nat Gateway - EIP
