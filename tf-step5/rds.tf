@@ -37,8 +37,8 @@ resource "aws_db_instance" "mysql" {
   manage_master_user_password = true
 
   # AZ - a : primary Mysql
-  # AZ - c : standby Mysql (장애시 대응용)
-  # 장애 대응, 오류 발생시 복제본 생성 서비스 유지
+  # AZ - c : standby Mysql (장애 시 대응용)
+  # 장애 대응, 오류 발생 시 복제본 생성 서비스 유지
   multi_az = true
   # 퍼블릭 IP x
   publicly_accessible = false
@@ -48,14 +48,14 @@ resource "aws_db_instance" "mysql" {
   vpc_security_group_ids = [aws_security_group.rds.id]
   # 7일간 보관
   backup_retention_period = 7
-  # 백업 수행 시간 => UTC 시간기준, 한국시간 +9시간
+  # 백업 수행 시간 => UTC 시간 기준, 한국 시간 +9시간
   backup_window = "18:00-19:00"
-  # RDS 패치 시간 => UTC 시간기준
+  # RDS 패치 시간 => UTC 시간 기준
   maintenance_window = "sun:19:00-sun:20:00"
 
-  # 삭제 방지 기능 않함(운영시 유지)
+  # 삭제 방지 기능 안 함(운영 시 유지)
   deletion_protection = false
-  # 삭제시 최종 스냅샷 운영 X, 실습 O
+  # 삭제 시 최종 스냅샷 운영 X, 실습 O
   skip_final_snapshot = true
   # rds 변경 사항 => 즉시 반영(유지보수 -> aws)
   apply_immediately = true
