@@ -27,30 +27,29 @@ resource "aws_internet_gateway" "main" {
 # ────────────────────────────────────────────────
 # Public Subnets - Public ALB, NAT Gateway 배치
 resource "aws_subnet" "public" {
-  for_each   = local.public_subnets # 동적으로 구성된 az별 가용영역명, cidr값
-  
-  vpc_id     = aws_vpc.main.id
-  availability_zone = each.value.az
-  cidr_block        = each.value.cidr
+  for_each = local.public_subnets # 동적으로 구성된 az별 가용영역명, cidr값
+
+  vpc_id                  = aws_vpc.main.id
+  availability_zone       = each.value.az
+  cidr_block              = each.value.cidr
   map_public_ip_on_launch = true
 
   tags = {
     Name = "${local.cluster_name}-public-${lower(each.key)}"
     # 쿠버네티스 관련
-    # 쿠버네티스가 외부용 로드밸런서 서브넷으로 식별할 수 있도록 태그 구성
-    # EKS Auto Mode 구성시 인터넷 접근이 가능한
-    # 로드밸런서 구성할 때 해당 서브넷 사용해도 좋다 라는 표식
-    
+    # 쿠보네티스가 외부용 로드밸런서 서브넷으로 식별할수 있도록 태그 구성
+    # EKS Auto Mode 구성시 인터넷 접근이 가능한 
+    # 로드밸러서 구성할때 해당 서브넷 사용해도 좋다 라는 표식    
+
     # 작동
     # EKS는 아래 태그값을 가진 서브넷을 찾아서 인터넷 공개용 ALB등을 배치
     "kubernetes.io/role/elb" = "1"
   }
 }
-
-# Private Application Subnets -EKS Auto Mode의 Node/pod 등 배치
-# 쿠버네티스가 해당 서브넷을 `내부용 ALB` 등을 만들 때 해당 서브넷을 사용하도록 하는 태그 표식 추가
+# Private Application Subnets - EKS Auto Mode의 Node/pod등 배치
+# 쿠버네티스가 해당 서브넷을 `내부 적용 ALB`등을 만들때 해당 서브넷사용하도록 하는 태그 표식 추가
 resource "aws_subnet" "app" {
-  for_each                = local.app_subnets
+  for_each = local.app_subnets
 
   vpc_id                  = aws_vpc.main.id
   cidr_block              = each.value.cidr
@@ -58,14 +57,13 @@ resource "aws_subnet" "app" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${local.cluster_name}-app-${lower(each.key)}"
+    Name                              = "${local.cluster_name}-app-${lower(each.key)}"
     "kubernetes.io/role/internal-elb" = "1"
   }
 }
-
 # Private Db Subnets - RDS
 resource "aws_subnet" "db" {
-  for_each                = local.db_subnets
+  for_each = local.db_subnets
 
   vpc_id                  = aws_vpc.main.id
   cidr_block              = each.value.cidr
@@ -74,36 +72,36 @@ resource "aws_subnet" "db" {
 
   tags = {
     Name = "${local.cluster_name}-db-${lower(each.key)}"
-    "kubernetes.io/role/internal-elb" = "1"
   }
 }
 
 # ────────────────────────────────────────────────
-# NAT
+# NAT Gateway
 # ────────────────────────────────────────────────
 # AZ별 Nat Gateway에 연결할 고정 공인 - eip
 resource "aws_eip" "nat" {
   # IP는 가용영역별 각각 1개씩 총 2개 준비
   for_each = aws_subnet.public
 
-  domain   = "vpc"
+  domain = "vpc"
 
   tags = {
     Name = "${local.cluster_name}-nat-eip-${lower(each.key)}" # a, c
   }
 
-  # 의존성 명시적 - igw가 반드시 구성되어 있어야 한다
-  depends_on = [ aws_internet_gateway.main ]
+  # 의존성- 명시적 - igw가 반드시 구성되어 있어야 한다
+  depends_on = [aws_internet_gateway.main]
 }
 resource "aws_nat_gateway" "main" {
   for_each = aws_subnet.public
 
   allocation_id = aws_eip.nat[each.key].id # IP를 가용영역별(a, c)로 세팅
-  subnet_id     = each.value.id            # 가용영역별 퍼블릭 서브넷
+  subnet_id     = each.value.id            # 가용영역별 퍼블릭 서브넷 
 
   tags = {
     Name = "${local.cluster_name}-nat-${lower(each.key)}"
   }
+
   depends_on = [
     aws_internet_gateway.main
   ]
