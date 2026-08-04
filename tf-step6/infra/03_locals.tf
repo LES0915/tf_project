@@ -28,14 +28,14 @@ locals {
   app_subnets = {
     for index, key in local.az_keys : key => {
       az   = var.availability_zones[index]
-      cidr = var.public_subnet_cidrs[index]
+      cidr = var.app_subnet_cidrs[index]
     }
   }
 
   db_subnets = {
     for index, key in local.az_keys : key => {
       az   = var.availability_zones[index]
-      cidr = var.public_subnet_cidrs[index]
+      cidr = var.db_subnet_cidrs[index]
     }
   }
 

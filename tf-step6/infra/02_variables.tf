@@ -34,7 +34,7 @@ variable "availability_zones" {
   # 유효성 검사 표기 (가용영역이 2개 이하이거나, c존이 없는 경우)
   validation {
     condition     = length(var.availability_zones) == 2
-    error_message = "본 구성을 정확하게 2개의 가용영역을 사용합니다."
+    error_message = "본 구성은 정확히 2개의 가용영역을 사용합니다."
   }
 }
 variable "public_subnet_cidrs" {
@@ -60,7 +60,7 @@ variable "db_subnet_cidrs" {
 variable "kubernetes_version" {
   description = "EKS Kubernetes 버전"
   type        = string
-  # 보수적으로 최신버적 바로 하위 버전 사용 (현재 사용 컨셉상 최신 버전 문제 없음)
+  # 보수적으로 최신 버전 바로 하위 버전 사용 (현재 사용 컨셉상 최신 버전 문제 없음)
   default = "1.35"
 }
 variable "cluster_endpoint_public_access_cidrs" {

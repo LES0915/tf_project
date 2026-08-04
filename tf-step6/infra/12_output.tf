@@ -1,5 +1,5 @@
-# 만들어진 정보를 기반 => 리소스명, id, arn등 동적으로 만들어진 값 
-# => 쿠버네티스 mainfest(구성 정보) 등등 동적 설정하기 위해 필요한 값은 출력 
+# 만들어진 정보를 기반 => 리소스명, id, arn 등 동적으로 만들어진 값
+# => 쿠버네티스 manifest(구성 정보) 등등 동적 설정하기 위해 필요한 값은 출력
 
 
 # ─────────────────────────────────────────────
@@ -81,7 +81,7 @@ output "rds_db_name" {
   value = var.db_name
 }
 # 비밀번호 자체가 아니라 Secrets Manager의 ARN이며 출력 시 숨김 처리한다.
-# 비번 젒근 하도록 => arn 제공
+# 비번 접근하도록 => arn 제공
 output "rds_master_secret_arn" {
   value     = aws_db_instance.mysql.master_user_secret[0].secret_arn
   sensitive = true
