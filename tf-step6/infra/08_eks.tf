@@ -96,21 +96,50 @@ resource "aws_eks_cluster" "main" {
     ]
 }
 
-
 # ────────────────────────────────────────────────
 # Metrics Server addon 구성 (CPU 사용량등 => pod증감등 관련 지표 )
 # ────────────────────────────────────────────────
-# resource "aws_eks_addon" "metrics_server" {
-  
-# }
+# Node, Pod의 현재 CPU, Memory 사용량 수집
+# 목적
+# 모니터링 : 
+#  > kubectl top nodes
+#  > kubectl top pods
+# pod 확장 -> HPA는  CPU, Memeory 사용량 고려(커스텀 정책(cpu 60% 초과하면 증설하시오)) 증량
+# pod 감소 -> ..
+# 장기 지표 저장 및 시각화 => 프로메테우스/그라파나 사용 (대시보드 구성) => 관제
+resource "aws_eks_addon" "metrics_server" {
+  # 매트릭 서버를 에드온할 대상 EKS 클러스터
+  cluster_name = aws_eks_cluster.main.name
+  # Add-on 이름
+  addon_name = "metrics-server"
+  # 이미 설정이된 경우 -> 설정 덮어쓰기로 구성
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
+  # 태그
+  tags = {
+      Name = "${local.cluster_name}-metrics-server"
+    }
+}
 
 
 # ────────────────────────────────────────────────
-# IAM Role 부분 추가 등록등 처리
+# IAM Role 부분 추가 등록등 처리 - 추가 관리자 access 엔트리
 # ────────────────────────────────────────────────
-# resource "aws_eks_access_entry" "admin" {
-  
-# }
+# var.addtional_admin_role_arns에 설정된 계정들도 EKS 클러스터에 접근하도록 관리 주체도 등록
+# 현재는 비워 있음 => []
+resource "aws_eks_access_entry" "admin" {
+  # 등록된 사용자 수 만큼 eks 클러스터 관리자에 등록하기 위해 엔트리 반복 데이터로 배치
+  for_each = var.addtional_admin_role_arns
+
+  # 대상 eks 클러스터
+  cluster_name = aws_eks_cluster.main.name
+
+  # 접근할 role arn
+  principal_arn = each.value
+
+  # 타입 : 일반 Iam 사용자, 다른 일반 role에 부여
+  type = "STANDARD"
+}
 # resource "aws_eks_access_policy_association" "admin" {
   
 # }
