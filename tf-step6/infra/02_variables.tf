@@ -30,7 +30,7 @@ variable "vpc_cidr" {
 variable "availability_zones" {
   description = "Multi-AZ 구성에 사용할 가용 영역 2개"
   type        = list(string)
-  default     = ["ap-northeast-1a", "ap-northeast-1c"] # 리전에 맞게 구성
+  default     = ["ap-northeast-2a", "ap-northeast-2c"] # 리전에 맞게 구성
   # 유효성 검사 표기 (가용영역이 2개 이하이거나, c존이 없는 경우)
   validation {
     condition     = length(var.availability_zones) == 2

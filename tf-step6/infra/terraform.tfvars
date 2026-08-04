@@ -1,6 +1,8 @@
-aws_region   = "ap-northeast-2"
+aws_region   = "ap-northeast-1"
 project_name = "de-ai-13-eks-auto"
 environment  = "dev"
+
+availability_zones = ["ap-northeast-1a", "ap-northeast-1c"]
 
 kubernetes_version = "1.35"
 

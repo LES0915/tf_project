@@ -6,7 +6,7 @@ import pymysql
 from fastapi import FastAPI, HTTPException
 
 # 2. FastAPI 객체 생성
-app = FastAPI(title="DE-AI-25 EKS Auto Mode WAS", version="1.0.0-auto")
+app = FastAPI(title="DE-AI-13 EKS Auto Mode WAS", version="1.0.0-auto")
 
 # 3. 일반 커스텀 함수
 def required_env(name: str) -> str:
@@ -35,7 +35,7 @@ def db_connection():
 def health() -> dict[str, str]:
     return {"status": "ok"}
 
-# web -> was : 정상연동 확인, 로드밸런스가 작동중인지 확인 (요청 여러번 수행)
+# web -> was : 정상연동 확인, 로드밸런서가 작동 중인지 확인 (요청 여러번 수행)
 @app.get("/api/info")
 def info() -> dict[str, str]:
     return {

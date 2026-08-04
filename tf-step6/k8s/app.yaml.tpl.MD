@@ -8,12 +8,12 @@ kind: IngressClassParams            # ALB 생성 옵션 정의 리소스
 metadata:
   name: alb
 spec:
-  scheme: internet-facing           # 외부 인터넷에서 접속 가능한 Puvlic ALB 생성
+  scheme: internet-facing           # 외부 인터넷에서 접속 가능한 Public ALB 생성
 ---
 
 # ─────────────────────────────────────────────
 # IngressClass
-# Ingress를 AWS ALB와 연결하는 클레스 설정
+# Ingress를 AWS ALB와 연결하는 클래스 설정
 # ─────────────────────────────────────────────
 apiVersion: networking.k8s.io/v1
 kind: IngressClass                      # ingress 처리할 컨트롤러 정의
@@ -113,7 +113,7 @@ spec:                             # Deployment의 실제 설정
 
 # ─────────────────────────────────────────────
 # Service
-# Web 파드가 Was의 파드에 접근할 수 있는 내부 주소 제공(중간 역활)
+# Web 파드가 Was의 파드에 접근할 수 있는 내부 주소 제공(중간 역할)
 # 거쳐서 이동
 # ─────────────────────────────────────────────
 apiVersion: v1
