@@ -1,3 +1,7 @@
+# ─────────────────────────────────────────────
+# Ingress
+# ─────────────────────────────────────────────
+# IngressClassParams
 apiVersion: eks.amazonaws.com/v1
 kind: IngressClassParams
 metadata:
@@ -5,6 +9,8 @@ metadata:
 spec:
   scheme: internet-facing
 ---
+
+# IngressClass
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
 metadata:
@@ -18,18 +24,30 @@ spec:
     kind: IngressClassParams
     name: alb
 ---
+
+# ─────────────────────────────────────────────
+# Namespace
+# ─────────────────────────────────────────────
+# Namespace
 apiVersion: v1
 kind: Namespace
 metadata:
   name: ${APP_NAMESPACE}
 ---
+
+# ─────────────────────────────────────────────
+# Was POD에 관련된 Deployment, Service, PDB, HPA
+# ─────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# Deployment (Pod 개수,복구,버전에따른 교체등 관리 총괄 -> 정책 구성 -> 클러스터-네임스페이스내에 System POD로 구성되어서 관리 업무 수행함)
+# ─────────────────────────────────────────────
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: was
   namespace: ${APP_NAMESPACE}
 spec:
-  replicas: 2
+  replicas: 2                 # was 파드는 기본 최소 2개를 실행(운영)
   selector:
     matchLabels:
       app: was
@@ -81,6 +99,8 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
 ---
+
+# Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -95,6 +115,8 @@ spec:
       targetPort: http
   type: ClusterIP
 ---
+
+# PodDisruptionBudget (PDB)
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -106,6 +128,8 @@ spec:
     matchLabels:
       app: was
 ---
+
+# HorizontalPodAutoscaler (HPA)
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -129,6 +153,11 @@ spec:
           type: Utilization
           averageUtilization: 60
 ---
+
+# ─────────────────────────────────────────────
+# Web POD에 관련된 Deployment, Service, PDB, HPA
+# ─────────────────────────────────────────────
+# Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -184,6 +213,8 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
 ---
+
+# Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -198,6 +229,8 @@ spec:
       targetPort: http
   type: ClusterIP
 ---
+
+# PodDisruptionBudget
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -209,6 +242,8 @@ spec:
     matchLabels:
       app: web
 ---
+
+# HorizontalPodAutoscaler
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
